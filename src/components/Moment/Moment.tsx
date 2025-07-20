@@ -28,23 +28,21 @@ const ContainerInner = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  height: 100%;
-  gap: ${rem(18)};
-  padding: ${rem(0, 16)};
-  max-width: calc(90vh * 9 / 16);
-  width: 90vmin;
+  width: 100%;
+  height: 100dvh;
+  gap: ${rem(16)};
+  padding: ${rem(16)};
 `;
 
 const Title = styled.div`
-  margin-top: ${rem(24)};
   font-size: ${rem(22)};
   font-weight: 900;
   flex-shrink: 0;
 `;
 
 const Card = styled.div`
-  width: 100%;
-  max-height: 90vh;
+  width: min(100%, calc(100vh * 9 / 16 - 80px));
+  height: min(100%, calc(100vw * 16 / 9));
   aspect-ratio: 9 / 16;
   border-radius: ${rem(12)};
   background-color: lightblue;
