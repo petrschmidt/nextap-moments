@@ -54,8 +54,8 @@ type MomentFileItem<T extends 'image' | 'video'> = {
   volume?: number;
 };
 
-export type MomentImageVariantItem = MomentFileItem<'image'>;
-export type MomentVideoVariantItem = MomentFileItem<'video'> & {
+export type MomentImageFiles = MomentFileItem<'image'>;
+export type MomentVideoFiles = MomentFileItem<'video'> & {
   duration: number;
 };
 
@@ -81,8 +81,8 @@ export type Moment = {
   description?: {
     text: string;
   };
-  image_files: MomentImageVariantItem[];
-  video_files: MomentVideoVariantItem[];
+  image_files: MomentImageFiles;
+  video_files: MomentVideoFiles;
   geo_pin: MomentGeoPin;
   soundtrack: {
     song_id: string;
