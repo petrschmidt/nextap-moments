@@ -1,24 +1,26 @@
 import styled from 'styled-components';
 import { forwardRef, useCallback, useEffect, useRef } from 'react';
 
-export type MomentProgressProps = {};
 export type MomentProgressRef = {
   updateProgress: (value: number, duration?: number) => void;
 };
 
-export const MomentProgress = forwardRef<MomentProgressRef>(({}: MomentProgressProps, ref) => {
+export const MomentProgress = forwardRef<MomentProgressRef>((_, ref) => {
   const progressRef = useRef<HTMLDivElement>(null);
 
-  const updateProgress = useCallback<MomentProgressRef['updateProgress']>((value: number, duration?: number) => {
-    if (progressRef.current) {
-      // Add 0.5s worth of progress ahead
-      const timeAhead = duration ? 0.5 / duration : 0;
-      const adjustedProgress = Math.min(value + timeAhead, 1);
-      
-      progressRef.current.style.transition = 'width 0.5s linear';
-      progressRef.current.style.width = `${adjustedProgress * 100}%`;
-    }
-  }, []);
+  const updateProgress = useCallback<MomentProgressRef['updateProgress']>(
+    (value: number, duration?: number) => {
+      if (progressRef.current) {
+        // Add 0.5s worth of progress ahead
+        const timeAhead = duration ? 0.5 / duration : 0;
+        const adjustedProgress = Math.min(value + timeAhead, 1);
+
+        progressRef.current.style.transition = 'width 0.5s linear';
+        progressRef.current.style.width = `${adjustedProgress * 100}%`;
+      }
+    },
+    []
+  );
 
   useEffect(() => {
     if (typeof ref === 'object' && ref) {

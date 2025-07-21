@@ -1,11 +1,20 @@
 import { MomentToolbar } from './MomentToolbar/MomentToolbar.tsx';
-import styled from 'styled-components';
-import { rem } from '../../styles/utils.ts';
 import { forwardRef, useEffect, useRef, useState } from 'react';
 import type { Moment as MomentType } from '../../types';
-import { Blurhash } from 'react-blurhash';
 import { MomentProgress, type MomentProgressRef } from './MomentProgress/MomentProgress.tsx';
 import { selectVideoVariant } from '../../utils';
+import {
+  MomentCard,
+  MomentCardOverlay,
+  MomentContainer,
+  MomentContainerInner,
+  MomentStyledBlurhash,
+  MomentTitle,
+  MomentVideo,
+  MomentVideoPlayOverlay,
+  MomentVideoPlayOverlayIconWrapper,
+} from './styles.tsx';
+import { PlayIcon } from '@phosphor-icons/react';
 
 export type MomentProps = {
   moment: MomentType;
@@ -14,12 +23,16 @@ export type MomentProps = {
 };
 
 export const Moment = forwardRef<HTMLElement, MomentProps>(
-  ({ moment: { user, image_files, video_files }, onVisible, onEnded }, containerRef) => {
+  ({ moment, onVisible, onEnded }, containerRef) => {
     const playerContainerRef = useRef<HTMLDivElement>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
     const progressRef = useRef<MomentProgressRef>(null);
+
     const [isVisible, setIsVisible] = useState(false);
     const [isPlaying, setIsPlaying] = useState(false);
+    const [isMuted, setIsMuted] = useState(false);
+
+    const togglePlayback = () => setIsPlaying((prev) => !prev);
 
     useEffect(() => {
       const observer = new IntersectionObserver(
@@ -63,8 +76,10 @@ export const Moment = forwardRef<HTMLElement, MomentProps>(
 
       if (video) {
         if (isPlaying) {
+          video.play();
           video.addEventListener('timeupdate', handler);
         } else {
+          video.pause();
           video.removeEventListener('timeupdate', handler);
         }
       }
@@ -88,88 +103,64 @@ export const Moment = forwardRef<HTMLElement, MomentProps>(
     }, [onEnded]);
 
     return (
-      <Container ref={containerRef}>
-        <ContainerInner>
-          <Title $isVisible={isVisible}>Moment by {user.username}</Title>
-          <Card
+      <MomentContainer ref={containerRef}>
+        <MomentContainerInner>
+          <MomentTitle $isVisible={isVisible}>Moment by {moment.user.username}</MomentTitle>
+          <MomentCard
             ref={playerContainerRef}
             $isVisible={isVisible}
-            $backgroundColor={image_files.background_color}>
-            <StyledBlurhash hash={image_files.background_hash} width="100%" height="100%" />
-            <Video
+            $backgroundColor={moment.image_files.background_color}>
+            <MomentStyledBlurhash
+              hash={moment.image_files.background_hash}
+              width="100%"
+              height="100%"
+            />
+            <MomentVideo
               ref={videoRef}
               width="100%"
               height="100%"
               preload="auto"
-              src={selectVideoVariant(video_files.variants).url}
+              src={selectVideoVariant(moment.video_files.variants).url}
+              playsInline
               muted
             />
 
-            <CardOverlay>
+            <MomentCardOverlay>
               <MomentProgress ref={progressRef} />
-              <MomentToolbar author={{ name: 'johndoe', imageUrl: '', url: '' }} />
-            </CardOverlay>
-          </Card>
-        </ContainerInner>
-      </Container>
+              <MomentVideoPlayOverlay onClick={togglePlayback} $hidden={isPlaying}>
+                <MomentVideoPlayOverlayIconWrapper>
+                  <PlayIcon weight="fill" size={32} />
+                </MomentVideoPlayOverlayIconWrapper>
+              </MomentVideoPlayOverlay>
+              <MomentToolbar
+                user={{
+                  username: moment.user._username,
+                  avatarBgColor: moment.user.avatar_image_bg,
+                  avatarImageUrl: moment.user.avatar_image_url,
+                  url: '',
+                }}
+                socialActions={{
+                  like: {
+                    count: moment.clap_count,
+                  },
+                  comment: {
+                    count: moment.comment_count,
+                  },
+                  share: {},
+                }}
+                playbackToggle={{
+                  isPaused: !isPlaying,
+                  onClick: togglePlayback,
+                }}
+                muteToggle={{
+                  isMuted,
+                  onClick: () => setIsMuted((prev) => !prev),
+                }}
+              />
+            </MomentCardOverlay>
+          </MomentCard>
+        </MomentContainerInner>
+      </MomentContainer>
     );
   }
 );
-
-const Container = styled.article`
-  display: flex;
-  justify-content: center;
-  flex: 1;
-  scroll-snap-align: center;
-
-  --container-padding: ${rem(16)};
-  --container-gap: ${rem(16)};
-  --title-font-size: ${rem(22)};
-`;
-
-const ContainerInner = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  height: 100dvh;
-  padding: var(--container-padding);
-  gap: var(--container-gap);
-`;
-
-const Title = styled.div<{ $isVisible: boolean }>`
-  width: min(100%, calc(100dvh * 9 / 16 - ${rem(80)}));
-  font-size: var(--title-font-size);
-  font-weight: 900;
-  flex-shrink: 0;
-  transform: translate3d(0, ${(p) => (p.$isVisible ? '0' : '150%')}, 0);
-  transition: transform 0.5s ease-in-out;
-`;
-
-const Card = styled.div<{ $isVisible: boolean; $backgroundColor: string }>`
-  position: relative;
-  height: min(100%, calc(100dvw * 16 / 9 - var(--container-padding) * 2));
-  aspect-ratio: 9 / 16;
-  border-radius: ${rem(12)};
-  background-color: ${(p) => p.$backgroundColor};
-  filter: drop-shadow(rgba(0, 0, 0, 0.25) 2px 4px 6px);
-  overflow: hidden;
-`;
-
-const CardOverlay = styled.div`
-  position: absolute;
-  padding: ${rem(12)};
-  inset: 0;
-  z-index: 20;
-`;
-
-const Video = styled.video`
-  position: absolute;
-  inset: 0;
-  z-index: 10;
-`;
-
-const StyledBlurhash = styled(Blurhash)`
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-`;

@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { Hero } from '../../components/Hero/Hero.tsx';
 import { Moment } from '../../components/Moment/Moment.tsx';
 import {
   useGetUserMoments,
