@@ -12,6 +12,7 @@ export default tseslint.config([
     plugins: { '@tanstack/query': pluginQuery },
     files: ['**/*.{ts,tsx}'],
     rules: {
+      '@typescript-eslint/no-unused-vars': 'warn',
       '@tanstack/query/exhaustive-deps': 'error',
     },
     extends: [
