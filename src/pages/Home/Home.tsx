@@ -1,21 +1,25 @@
 import styled from 'styled-components';
 import { Moment } from '../../components/Moment/Moment.tsx';
+import type { Moment as MomentType } from '../../types/api/moment';
 import {
   useGetUserMoments,
   type UseGetUserMomentsResponse,
 } from '../../hooks/api/useGetUserMoments.ts';
 import { useRef, useState } from 'react';
 
-const PAGE_SIZE = 2;
+const PAGE_SIZE = 3;
 const VIRTUAL_ITEMS_BUFFER = 1;
 
 export default function Home() {
-  const { data, isLoading } = useGetUserMoments(undefined, { limit: PAGE_SIZE });
+  const { data, isLoading, fetchNextPage } = useGetUserMoments(undefined, { limit: PAGE_SIZE });
   const [currentIndex, setCurrentIndex] = useState(0);
   const nextMomentRef = useRef<HTMLElement>(null);
 
-  const initialItems = data?.data;
-  const virtualItems: UseGetUserMomentsResponse['data'] =
+  const initialItems = data?.pages.reduce(
+    (prev, { data }) => [...prev, ...data],
+    [] as MomentType[]
+  );
+  const virtualItems: MomentType[] =
     initialItems?.reduce(
       (prev, item, index) => {
         if (
@@ -36,8 +40,6 @@ export default function Home() {
     });
   };
 
-  console.log(currentIndex);
-
   return (
     <MomentWrapper>
       {isLoading && <>Loading...</>}
@@ -48,13 +50,23 @@ export default function Home() {
         const isNext = realIndex === currentIndex + 1;
         const isLast = initialItems ? realIndex === initialItems.length - 1 : true;
 
+        const onVisible = () => {
+          if (realIndex !== undefined) {
+            setCurrentIndex(realIndex);
+
+            if (realIndex === initialItems.length - 2) {
+              void fetchNextPage();
+            }
+          }
+        };
+
         return (
           <Moment
             key={item.id}
             ref={isNext ? nextMomentRef : undefined}
             moment={item}
             loop={isLast}
-            onVisible={realIndex !== undefined ? () => setCurrentIndex(realIndex) : undefined}
+            onVisible={onVisible}
             onEnded={onCurrentMomentEnded}
           />
         );
