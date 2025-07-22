@@ -9,6 +9,7 @@ import '@fontsource/poppins/400.css';
 import '@fontsource/poppins/500.css';
 import '@fontsource/poppins/600.css';
 import '@fontsource/poppins/700.css';
+import { UserPreferencesProvider } from './providers';
 
 const queryClient = new QueryClient();
 
@@ -17,10 +18,12 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme}>
         <GlobalStyle />
-        <Routes>
-          <Route index element={<Home />} />
-          <Route path="/m/:id" element={<Home />} />
-        </Routes>
+        <UserPreferencesProvider>
+          <Routes>
+            <Route index element={<Home />} />
+            <Route path="/m/:id" element={<Home />} />
+          </Routes>
+        </UserPreferencesProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );

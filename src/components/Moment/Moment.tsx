@@ -1,13 +1,13 @@
 import { MomentToolbar } from './MomentToolbar/MomentToolbar.tsx';
 import { forwardRef, useEffect, useRef, useState } from 'react';
 import type { Moment as MomentType } from '../../types';
-import { MomentProgress, type MomentProgressRef } from './MomentProgress/MomentProgress.tsx';
-import { selectVideoVariant } from '../../utils';
+import { MomentProgress } from './MomentProgress/MomentProgress.tsx';
 import {
   MomentCard,
   MomentCardOverlay,
   MomentContainer,
   MomentContainerInner,
+  MomentImage,
   MomentStyledBlurhash,
   MomentTitle,
   MomentVideo,
@@ -15,22 +15,30 @@ import {
   MomentVideoPlayOverlayIconWrapper,
 } from './styles.tsx';
 import { PlayIcon } from '@phosphor-icons/react';
+import { MomentVideoSourceSet } from './MomentVideoSourceSet/MomentVideoSourceSet.tsx';
+import { MomentImageSourceSet } from './MomentImageSourceSet/MomentImageSourceSet.tsx';
+import { useUserPreferences } from '../../providers';
 
 export type MomentProps = {
   moment: MomentType;
+  loop?: boolean;
   onVisible?: () => void;
   onEnded?: () => void;
 };
 
 export const Moment = forwardRef<HTMLElement, MomentProps>(
-  ({ moment, onVisible, onEnded }, containerRef) => {
+  ({ moment, loop, onVisible, onEnded }, containerRef) => {
     const playerContainerRef = useRef<HTMLDivElement>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
-    const progressRef = useRef<MomentProgressRef>(null);
+    const audioRef = useRef<HTMLAudioElement>(null);
 
     const [isVisible, setIsVisible] = useState(false);
     const [isPlaying, setIsPlaying] = useState(false);
-    const [isMuted, setIsMuted] = useState(false);
+    const { muted, setMuted } = useUserPreferences();
+
+    const imageUrl = moment.image_files.variants.find(
+      ({ variant }) => variant === 'webp_medium'
+    )?.url;
 
     const togglePlayback = () => setIsPlaying((prev) => !prev);
 
@@ -38,6 +46,8 @@ export const Moment = forwardRef<HTMLElement, MomentProps>(
       const observer = new IntersectionObserver(
         ([entry]) => {
           setIsVisible(entry.isIntersecting);
+          setIsPlaying(entry.isIntersecting);
+
           if (entry.isIntersecting) {
             onVisible?.();
           }
@@ -53,54 +63,36 @@ export const Moment = forwardRef<HTMLElement, MomentProps>(
 
     useEffect(() => {
       const video = videoRef.current;
+      const audio = audioRef.current;
 
-      if (video) {
-        if (isVisible) {
-          video.play().then(() => setIsPlaying(true));
-        } else {
-          video.pause();
-          setIsPlaying(false);
-        }
-      }
-    }, [isVisible]);
-
-    useEffect(() => {
-      const video = videoRef.current;
-
-      const handler = () => {
-        if (progressRef.current && video && video.duration > 0) {
-          const progress = video.currentTime / video.duration;
-          progressRef?.current.updateProgress(progress, video.duration);
-        }
-      };
-
-      if (video) {
-        if (isPlaying) {
-          video.play();
-          video.addEventListener('timeupdate', handler);
-        } else {
-          video.pause();
-          video.removeEventListener('timeupdate', handler);
-        }
-      }
-      return () => {
-        video?.removeEventListener('timeupdate', handler);
-      };
-    }, [isPlaying]);
-
-    useEffect(() => {
-      const video = videoRef.current;
-
-      const handler = () => {
+      const onEndedHandler = () => {
         setIsPlaying(false);
         onEnded?.();
       };
-      video?.addEventListener('ended', handler);
+
+      const shouldPlay = isPlaying;
+
+      if (video) {
+        if (shouldPlay) {
+          video.play().catch(() => setIsPlaying(false));
+          video.addEventListener('ended', onEndedHandler);
+        } else {
+          video.pause();
+          video.removeEventListener('ended', onEndedHandler);
+        }
+      }
+      if (audio) {
+        if (shouldPlay) {
+          audio.play();
+        } else {
+          audio.pause();
+        }
+      }
 
       return () => {
-        video?.removeEventListener('ended', handler);
+        video?.removeEventListener('ended', onEndedHandler);
       };
-    }, [onEnded]);
+    }, [isPlaying, onEnded]);
 
     return (
       <MomentContainer ref={containerRef}>
@@ -115,23 +107,41 @@ export const Moment = forwardRef<HTMLElement, MomentProps>(
               width="100%"
               height="100%"
             />
-            <MomentVideo
-              ref={videoRef}
-              width="100%"
-              height="100%"
-              preload="auto"
-              src={selectVideoVariant(moment.video_files.variants).url}
-              playsInline
-              muted
-            />
+
+            {moment.video_files ? (
+              <MomentVideo
+                ref={videoRef}
+                preload="auto"
+                poster={imageUrl}
+                playsInline
+                loop={loop}
+                muted={muted}>
+                <MomentVideoSourceSet variants={moment.video_files.variants} />
+              </MomentVideo>
+            ) : (
+              <MomentImage>
+                <MomentImageSourceSet variants={moment.image_files.variants} />
+              </MomentImage>
+            )}
+            {moment.soundtrack && (
+              <audio
+                ref={audioRef}
+                src={moment.soundtrack.src}
+                playsInline
+                loop={loop}
+                muted={muted}
+              />
+            )}
 
             <MomentCardOverlay>
-              <MomentProgress ref={progressRef} />
+              <MomentProgress running={isPlaying} durationMs={moment.video_files?.duration ?? 0} />
+
               <MomentVideoPlayOverlay onClick={togglePlayback} $hidden={isPlaying}>
                 <MomentVideoPlayOverlayIconWrapper>
                   <PlayIcon weight="fill" size={32} />
                 </MomentVideoPlayOverlayIconWrapper>
               </MomentVideoPlayOverlay>
+
               <MomentToolbar
                 user={{
                   username: moment.user._username,
@@ -153,8 +163,8 @@ export const Moment = forwardRef<HTMLElement, MomentProps>(
                   onClick: togglePlayback,
                 }}
                 muteToggle={{
-                  isMuted,
-                  onClick: () => setIsMuted((prev) => !prev),
+                  isMuted: muted,
+                  onClick: () => setMuted(!muted),
                 }}
               />
             </MomentCardOverlay>

@@ -82,9 +82,9 @@ export type Moment = {
     text: string;
   };
   image_files: MomentImageFiles;
-  video_files: MomentVideoFiles;
+  video_files?: MomentVideoFiles;
   geo_pin: MomentGeoPin;
-  soundtrack: {
+  soundtrack?: {
     song_id: string;
     start_time: number;
     src: string;

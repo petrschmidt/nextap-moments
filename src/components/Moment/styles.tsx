@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { media, rem } from '../../styles/utils.ts';
 import { Blurhash } from 'react-blurhash';
 
@@ -61,10 +61,19 @@ export const MomentCardOverlay = styled.div`
   );
 `;
 
-export const MomentVideo = styled.video`
+export const MomentMedia = css`
   position: absolute;
+  width: 100%;
+  height: 100%;
   inset: 0;
   z-index: 10;
+`;
+
+export const MomentVideo = styled.video`
+  ${MomentMedia}
+`;
+export const MomentImage = styled.picture`
+  ${MomentMedia}
 `;
 
 export const MomentStyledBlurhash = styled(Blurhash)`

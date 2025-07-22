@@ -6,10 +6,11 @@ import {
 } from '../../hooks/api/useGetUserMoments.ts';
 import { useRef, useState } from 'react';
 
+const PAGE_SIZE = 2;
 const VIRTUAL_ITEMS_BUFFER = 1;
 
 export default function Home() {
-  const { data, isLoading } = useGetUserMoments();
+  const { data, isLoading } = useGetUserMoments(undefined, { limit: PAGE_SIZE });
   const [currentIndex, setCurrentIndex] = useState(0);
   const nextMomentRef = useRef<HTMLElement>(null);
 
@@ -35,28 +36,30 @@ export default function Home() {
     });
   };
 
+  console.log(currentIndex);
+
   return (
-    <>
-      {/*<Hero />*/}
-      <MomentWrapper>
-        {isLoading && <>Loading...</>}
+    <MomentWrapper>
+      {isLoading && <>Loading...</>}
 
-        <MomentPlaceholder style={{ '--placeholder-multiplier': currentIndex - 1 }} />
-        {virtualItems.map((item) => {
-          const realIndex = initialItems?.findIndex(({ id }) => id === item.id);
+      <MomentPlaceholder style={{ '--placeholder-multiplier': currentIndex - 1 }} />
+      {virtualItems.map((item) => {
+        const realIndex = initialItems?.findIndex(({ id }) => id === item.id);
+        const isNext = realIndex === currentIndex + 1;
+        const isLast = initialItems ? realIndex === initialItems.length - 1 : true;
 
-          return (
-            <Moment
-              key={item.id}
-              ref={realIndex === currentIndex + 1 ? nextMomentRef : undefined}
-              moment={item}
-              onVisible={realIndex ? () => setCurrentIndex(realIndex) : undefined}
-              onEnded={onCurrentMomentEnded}
-            />
-          );
-        })}
-      </MomentWrapper>
-    </>
+        return (
+          <Moment
+            key={item.id}
+            ref={isNext ? nextMomentRef : undefined}
+            moment={item}
+            loop={isLast}
+            onVisible={realIndex !== undefined ? () => setCurrentIndex(realIndex) : undefined}
+            onEnded={onCurrentMomentEnded}
+          />
+        );
+      })}
+    </MomentWrapper>
   );
 }
 

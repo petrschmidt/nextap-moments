@@ -3,8 +3,10 @@ export * from './moment.ts';
 
 export type ApiResponse<T> = {
   data: T;
-  cursor: {
-    before: string;
-    after: string;
-  };
+  cursor: Cursor;
+};
+
+export type Cursor = {
+  before?: string;
+  after?: string;
 };
