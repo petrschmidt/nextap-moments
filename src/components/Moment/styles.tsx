@@ -74,6 +74,10 @@ export const MomentVideo = styled.video`
 `;
 export const MomentImage = styled.picture`
   ${MomentMedia}
+
+  img {
+    width: 100%;
+  }
 `;
 
 export const MomentStyledBlurhash = styled(Blurhash)`
@@ -93,7 +97,7 @@ export const MomentVideoPlayOverlay = styled.div<{ $hidden: boolean }>`
   transition: opacity 100ms ease-in;
 `;
 
-export const MomentVideoPlayOverlayIconWrapper = styled.div`
+export const MomentVideoPlayOverlayIconWrapper = styled.button`
   width: ${rem(64)};
   height: ${rem(64)};
   display: flex;

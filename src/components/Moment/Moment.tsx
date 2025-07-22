@@ -1,5 +1,5 @@
 import { MomentToolbar } from './MomentToolbar/MomentToolbar.tsx';
-import { forwardRef, useEffect, useRef, useState } from 'react';
+import { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
 import type { Moment as MomentType } from '../../types';
 import { MomentProgress } from './MomentProgress/MomentProgress.tsx';
 import {
@@ -19,6 +19,8 @@ import { MomentVideoSourceSet } from './MomentVideoSourceSet/MomentVideoSourceSe
 import { MomentImageSourceSet } from './MomentImageSourceSet/MomentImageSourceSet.tsx';
 import { useUserPreferences } from '../../providers';
 
+const MOMENT_DEFAULT_DURATION = 8000;
+
 export type MomentProps = {
   moment: MomentType;
   loop?: boolean;
@@ -36,11 +38,17 @@ export const Moment = forwardRef<HTMLElement, MomentProps>(
     const [isPlaying, setIsPlaying] = useState(false);
     const { muted, setMuted } = useUserPreferences();
 
+    const duration = moment.video_files?.duration ?? MOMENT_DEFAULT_DURATION;
+    const isImageOnly = !moment.video_files;
     const imageUrl = moment.image_files.variants.find(
       ({ variant }) => variant === 'webp_medium'
     )?.url;
 
     const togglePlayback = () => setIsPlaying((prev) => !prev);
+    const resetMedia = () => {
+      if (videoRef.current) videoRef.current.currentTime = 0;
+      if (audioRef.current) audioRef.current.currentTime = 0;
+    };
 
     useEffect(() => {
       const observer = new IntersectionObserver(
@@ -50,6 +58,8 @@ export const Moment = forwardRef<HTMLElement, MomentProps>(
 
           if (entry.isIntersecting) {
             onVisible?.();
+          } else {
+            resetMedia();
           }
         },
         { threshold: 0.5, rootMargin: '0px' }
@@ -64,10 +74,18 @@ export const Moment = forwardRef<HTMLElement, MomentProps>(
     useEffect(() => {
       const video = videoRef.current;
       const audio = audioRef.current;
+      let imageTimout: number;
 
       const onEndedHandler = () => {
         setIsPlaying(false);
         onEnded?.();
+      };
+
+      const startImageTimeout = () => {
+        imageTimout = setTimeout(onEndedHandler, MOMENT_DEFAULT_DURATION);
+      };
+      const clearImageTimeout = () => {
+        clearTimeout(imageTimout);
       };
 
       const shouldPlay = isPlaying;
@@ -83,16 +101,23 @@ export const Moment = forwardRef<HTMLElement, MomentProps>(
       }
       if (audio) {
         if (shouldPlay) {
-          audio.play();
+          if (isImageOnly) {
+            audio.play().catch(() => setIsPlaying(false));
+            startImageTimeout();
+          } else {
+            audio.play();
+          }
         } else {
           audio.pause();
+          clearImageTimeout();
         }
       }
 
       return () => {
         video?.removeEventListener('ended', onEndedHandler);
+        clearImageTimeout();
       };
-    }, [isPlaying, onEnded]);
+    }, [isPlaying, isImageOnly, onEnded]);
 
     return (
       <MomentContainer ref={containerRef}>
@@ -134,7 +159,7 @@ export const Moment = forwardRef<HTMLElement, MomentProps>(
             )}
 
             <MomentCardOverlay>
-              <MomentProgress running={isPlaying} durationMs={moment.video_files?.duration ?? 0} />
+              <MomentProgress running={isPlaying} visible={isVisible} durationMs={duration} />
 
               <MomentVideoPlayOverlay onClick={togglePlayback} $hidden={isPlaying}>
                 <MomentVideoPlayOverlayIconWrapper>

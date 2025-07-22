@@ -12,7 +12,7 @@ export type UserPreferencesContextState = {
 };
 
 export const USER_PREFERENCES_DEFAULT_STATE: UserPreferencesContextState = {
-  muted: false,
+  muted: true,
 };
 
 export const UserPreferencesContext = createContext<UserPreferencesContextType>({
