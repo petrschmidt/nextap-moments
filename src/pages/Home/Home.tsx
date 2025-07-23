@@ -4,7 +4,7 @@ import type { Moment as MomentType } from '../../types/api/moment';
 import { useGetUserMoments } from '../../hooks/api/useGetUserMoments.ts';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useVirtualItems } from '../../hooks/useVirtualItems.ts';
-import { rem } from '../../styles/utils.ts';
+import { rem } from '../../styles';
 import { flexCenter } from '../../styles/mixins.ts';
 
 const PAGE_SIZE = 3;
@@ -17,7 +17,9 @@ export default function Home() {
       limit: PAGE_SIZE,
     }
   );
+  // Index of the currently visible (playing) Moment
   const [currentIndex, setCurrentIndex] = useState(0);
+  // Reference to the next Moment after the current one
   const nextMomentRef = useRef<HTMLElement>(null);
 
   // Flatten pages into single array of MomentType
@@ -25,12 +27,14 @@ export default function Home() {
     () => data?.pages.reduce((prev, { data }) => [...prev, ...data], [] as MomentType[]),
     [data]
   );
+  // Virtual items to be rendered
   const virtualItems = useVirtualItems({
     initialItems,
     currentIndex,
     buffer: VIRTUAL_ITEMS_BUFFER,
   });
 
+  // Callback that fires when a Moment comes into view
   const onVisible = useCallback(
     (realIndex: number) => {
       setCurrentIndex(realIndex);
@@ -43,6 +47,7 @@ export default function Home() {
     [initialItems?.length, fetchNextPage, hasNextPage, isFetchingNextPage]
   );
 
+  // Callback that fires when current Moment finished playing (to the end), so the next one can continue
   const onCurrentMomentEnded = () => {
     nextMomentRef.current?.scrollIntoView({
       behavior: 'smooth',
@@ -53,12 +58,13 @@ export default function Home() {
   const memoizedMoments = useMemo(
     () =>
       virtualItems.map((item) => {
+        // Index of the item in the complete array of items (outside virtualization)
         const realIndex = initialItems?.findIndex(({ id }) => id === item.id);
         const isNext = realIndex === currentIndex + 1;
         const isLast = initialItems ? realIndex === initialItems.length - 1 : true;
 
         const handleVisible = () => {
-          if (realIndex) onVisible(realIndex as number);
+          if (realIndex !== undefined) onVisible(realIndex as number);
         };
 
         return (
@@ -109,6 +115,10 @@ const MomentWrapper = styled.div`
   }
 `;
 
+/**
+ * Special component needed for virtualization.
+ * It fills the space before the current virtualized items for smooth scrolling/flowing experience.
+ */
 const MomentPlaceholder = styled.div`
   height: calc(100dvh * var(--placeholder-multiplier));
 `;

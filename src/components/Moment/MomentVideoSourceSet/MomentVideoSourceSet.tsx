@@ -13,6 +13,9 @@ const getMimeType = (variant: MomentVideoVariant): string => {
   return 'video/mp4';
 };
 
+/**
+ * Component that renders selected set of video sources
+ */
 export const MomentVideoSourceSet = ({ variants }: MomentMediaSourceSetProps) => {
   const orderedVariants = VARIANT_ORDER.map((variant) =>
     variants.find((v) => v.variant === variant)

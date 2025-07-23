@@ -2,6 +2,10 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import { API_ENDPOINTS, apiFetcher, type PagingProps } from '../../utils';
 import type { ApiResponse, Moment } from '../../types';
 
+/**
+ * Helper hooks built upon @tanstack/query
+ */
+
 export const useGetUserMomentsQueryKey = 'steller-user-moments';
 export const useGetUserMoments = (userId: string = '204993912312432428', paging?: PagingProps) => {
   return useInfiniteQuery({

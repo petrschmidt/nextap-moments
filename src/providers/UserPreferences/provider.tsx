@@ -7,6 +7,9 @@ import {
 } from './context';
 import { LocalStorageKey } from '../../types';
 
+/**
+ * Handler for retrieving and persisting user preferences via `localStorage`
+ */
 const storage = {
   get preferences(): UserPreferencesContextState | undefined {
     try {
@@ -28,6 +31,9 @@ const storage = {
   },
 };
 
+/**
+ * Context provider for storing and retrieving user preferences (e.g. muted)
+ */
 export const UserPreferencesProvider = ({ children }: { children?: ReactNode }) => {
   const [preferences, setPreferences] = useState<UserPreferencesContextState>(() => ({
     ...USER_PREFERENCES_DEFAULT_STATE,

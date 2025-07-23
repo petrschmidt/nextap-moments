@@ -13,6 +13,10 @@ export type UseVirtualItemsHookType = <T>(
 
 const DEFAULT_BUFFER = 1;
 
+/**
+ * Function that return subset of `initialItems` with current item (index) and buffer before
+ * and after the item.
+ */
 export const getVirtualItems = <T>(
   initialItems: T[] | undefined,
   currentIndex: number,
@@ -25,6 +29,13 @@ export const getVirtualItems = <T>(
     return prev;
   }, [] as T[]) ?? [];
 
+/**
+ * Items virtualizer hook. Receives array of all items and returns item based on current index
+ * along with specified buffer before and after the current item.
+ * @param initialItems - Full array of items that should be virtualized
+ * @param currentIndex - Index of the current item
+ * @param buffer - Buffer (items) before and after the current item
+ */
 export const useVirtualItems: UseVirtualItemsHookType = ({
   initialItems,
   currentIndex,

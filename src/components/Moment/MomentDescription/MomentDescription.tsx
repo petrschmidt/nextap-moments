@@ -10,6 +10,9 @@ export type MomentDescriptionProps = {
   views?: number;
 };
 
+/**
+ * Description displays Moment's location, description and view count
+ */
 export const MomentDescription = ({ location, description, views }: MomentDescriptionProps) => {
   return (
     <Container>

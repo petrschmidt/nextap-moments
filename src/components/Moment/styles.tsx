@@ -3,6 +3,10 @@ import { media, rem } from '../../styles/utils.ts';
 import { flexCenter } from '../../styles/mixins.ts';
 import { Blurhash } from 'react-blurhash';
 
+/**
+ * Moment's main components (extracted to separate file for better readibility)
+ */
+
 export const MomentContainer = styled.article`
   display: flex;
   justify-content: center;

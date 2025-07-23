@@ -20,6 +20,7 @@ import { MomentImageSourceSet } from './MomentImageSourceSet/MomentImageSourceSe
 import { useUserPreferences } from '../../providers';
 import { MomentDescription } from './MomentDescription/MomentDescription.tsx';
 
+// Default moment duration when no video is provided (i.e. image-only moment)
 const MOMENT_DEFAULT_DURATION = 8000;
 
 export type MomentProps = {
@@ -46,23 +47,28 @@ export const Moment = forwardRef<HTMLElement, MomentProps>(
     )?.url;
 
     const togglePlayback = () => setIsPlaying((prev) => !prev);
+    // Resets media (video/audio) to beginning
     const resetMedia = () => {
       if (videoRef.current) videoRef.current.currentTime = 0;
       if (audioRef.current) audioRef.current.currentTime = 0;
     };
 
     useEffect(() => {
+      // This intersection observer fires only when the current moment comes into or out of the view
       const observer = new IntersectionObserver(
         ([entry]) => {
           setIsVisible(entry.isIntersecting);
           setIsPlaying(entry.isIntersecting);
 
           if (entry.isIntersecting) {
+            // When in view, call back to parent component - mainly for virtualization and paging purposes
             onVisible?.();
           } else {
+            // When out of the view, reset the progress of media
             resetMedia();
           }
         },
+        // We want the Moment to activate only after at least 50% of it is visible
         { threshold: 0.5, rootMargin: '0px' }
       );
       if (playerContainerRef.current) {
@@ -72,6 +78,10 @@ export const Moment = forwardRef<HTMLElement, MomentProps>(
       return () => observer.disconnect();
     }, [onVisible]);
 
+    /**
+     * This `useEffect` runs every time the `isPlaying` state changes in order to control
+     * the playback of the respective media.
+     */
     useEffect(() => {
       const video = videoRef.current;
       const audio = audioRef.current;
@@ -89,27 +99,33 @@ export const Moment = forwardRef<HTMLElement, MomentProps>(
         clearTimeout(imageTimout);
       };
 
+      // For better readability
       const shouldPlay = isPlaying;
 
       if (video) {
         if (shouldPlay) {
-          video.play().catch(() => setIsPlaying(false));
+          // When `video` is available and is not playing => play
+          video
+            .play()
+            .then(() => audio?.play())
+            .catch(() => setIsPlaying(false));
           video.addEventListener('ended', onEndedHandler);
         } else {
+          // When `video` is available and is playing => pause
           video.pause();
+          audio?.pause();
           video.removeEventListener('ended', onEndedHandler);
         }
       }
-      if (audio) {
+
+      if (isImageOnly) {
         if (shouldPlay) {
-          if (isImageOnly) {
-            audio.play().catch(() => setIsPlaying(false));
-            startImageTimeout();
-          } else {
-            audio.play();
-          }
+          // When only image is available (no video) and provided audio is not playing => play
+          audio?.play();
+          startImageTimeout();
         } else {
-          audio.pause();
+          // When only image is available (no video) and provided audio is playing => pause
+          audio?.pause();
           clearImageTimeout();
         }
       }
@@ -167,7 +183,11 @@ export const Moment = forwardRef<HTMLElement, MomentProps>(
               </MomentVideoPlayOverlay>
 
               <div>
-                <MomentProgress running={isPlaying} visible={isVisible} durationMs={duration} />
+                <MomentProgress
+                  running={isPlaying}
+                  visibleInViewport={isVisible}
+                  durationMs={duration}
+                />
                 <MomentToolbar
                   user={{
                     username: moment.user._username,

@@ -13,6 +13,9 @@ const getMimeType = (variant: MomentImageVariant): string => {
   return 'image/jpeg';
 };
 
+/**
+ * Component that renders selected set of image sources along with fallback <img>
+ */
 export const MomentImageSourceSet = ({ variants }: MomentImageSourceSetProps) => {
   const orderedVariants = VARIANT_ORDER.map((variant) =>
     variants.find((v) => v.variant === variant)

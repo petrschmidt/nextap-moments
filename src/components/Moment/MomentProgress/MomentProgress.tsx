@@ -3,16 +3,21 @@ import { rem } from '../../../styles';
 
 export type MomentProgressProps = {
   running: boolean;
-  visible: boolean;
+  visibleInViewport: boolean;
   durationMs: number;
 };
 
 const BORDER_RADIUS = rem(5);
 
-export const MomentProgress = ({ running, visible, durationMs }: MomentProgressProps) => {
+export const MomentProgress = ({ running, visibleInViewport, durationMs }: MomentProgressProps) => {
   return (
     <Container>
-      <Progress $running={running} $visible={visible} $durationMs={durationMs} role="progressbar" />
+      <Progress
+        $running={running}
+        $visibleInViewport={visibleInViewport}
+        $durationMs={durationMs}
+        role="progressbar"
+      />
     </Container>
   );
 };
@@ -26,14 +31,18 @@ const Container = styled.div`
   overflow: hidden;
 `;
 
-const Progress = styled.div<{ $running: boolean; $visible: boolean; $durationMs: number }>`
+const Progress = styled.div<{
+  $running: boolean;
+  $visibleInViewport: boolean;
+  $durationMs: number;
+}>`
   position: absolute;
   inset: 0;
   width: 0;
   height: 100%;
   background-color: ${({ theme }) => theme.colors.foreground.primary};
   border-radius: ${BORDER_RADIUS};
-  animation-name: ${(p) => (p.$visible ? 'fill' : 'none')};
+  animation-name: ${(p) => (p.$visibleInViewport ? 'fill' : 'none')};
   animation-duration: ${(p) => p.$durationMs}ms;
   animation-timing-function: linear;
   animation-play-state: ${(p) => (p.$running ? 'running' : 'paused')};
