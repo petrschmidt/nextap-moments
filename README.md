@@ -1,69 +1,75 @@
-# React + TypeScript + Vite
+# NEXTAP Moments
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Author**: Petr Schmidt
 
-Currently, two official plugins are available:
+A React-based moments viewing application with vertical scrolling, infinite feed, and optimized media playback.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Tech Stack
 
-## Expanding the ESLint configuration
+- React 19 + TypeScript
+- Styled Components
+- React Router
+- TanStack Query
+- Phosphor Icons
+- Vite + Vitest
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Development
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+```bash
+# Install dependencies
+npm install
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+# Start dev server
+npm run dev
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Run tests
+npm test
+
+# Build for production
+npm run build
+
+# Lint code
+npm run lint
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Architecture
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Core Components
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- `Moment.tsx` - Main moment component with auto-play and viewport detection
+- `MomentToolbar.tsx` - Social actions and playback controls
+- `MomentProgress.tsx` - Asynchronous visual progress indicator
+- `MomentDescription.tsx` - Location and content description
+
+### Media Handling
+
+- `MomentImageSourceSet.tsx` - Responsive image with multiple variants
+- `MomentVideoSourceSet.tsx` - Video optimization with format selection
+- Blurhash integration for smooth loading transitions
+
+### Performance
+
+- Custom virtualization hook (`useVirtualItems.ts`) with buffer-based rendering (±1 item around viewport)
+- Infinite query with pagination
+
+### API Integration
+
+- Steller API integration (`api.steller.co/v1`)
+- Infinite query hooks for user moments
+
+## Project Structure
+
 ```
+src/
+├── components/
+│   └── Moment/           # Moment components
+├── hooks/
+│   ├── api/             # API query hooks
+│   └── useVirtualItems.ts
+├── pages/
+│   └── Home/            # Main feed page
+├── providers/           # Context providers
+├── types/              # TypeScript definitions
+└── utils/              # Utilities and API config
+```
+
