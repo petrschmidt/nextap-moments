@@ -1,6 +1,6 @@
-import { render, screen } from '../../../test-utils';
+import { render, screen } from '../../test-utils.tsx';
 import { describe, it, expect } from 'vitest';
-import { MomentDescription, type MomentDescriptionProps } from './MomentDescription';
+import { MomentDescription, type MomentDescriptionProps } from './MomentDescription.tsx';
 
 describe('MomentDescription', () => {
   it('renders location when provided', () => {

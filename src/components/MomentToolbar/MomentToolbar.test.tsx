@@ -1,6 +1,6 @@
-import { render, screen } from '../../../test-utils';
+import { render, screen } from '../../test-utils.tsx';
 import { describe, it, expect } from 'vitest';
-import { MomentToolbar, type MomentToolbarProps } from './MomentToolbar';
+import { MomentToolbar, type MomentToolbarProps } from './MomentToolbar.tsx';
 
 describe('MomentToolbar', () => {
   const mockProps: MomentToolbarProps = {
@@ -41,7 +41,7 @@ describe('MomentToolbar', () => {
     expect(container.querySelector('[data-test="like"]')).toBeInTheDocument();
     expect(container.querySelector('[data-test="comment"]')).toBeInTheDocument();
     expect(container.querySelector('[data-test="share"]')).toBeInTheDocument();
-    
+
     expect(screen.getByText('42')).toBeInTheDocument();
     expect(screen.getByText('5')).toBeInTheDocument();
   });

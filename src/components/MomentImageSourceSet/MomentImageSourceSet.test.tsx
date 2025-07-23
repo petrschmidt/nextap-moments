@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
-import { MomentImageSourceSet, type MomentImageSourceSetProps } from './MomentImageSourceSet';
+import { MomentImageSourceSet, type MomentImageSourceSetProps } from './MomentImageSourceSet.tsx';
 
 describe('MomentImageSourceSet', () => {
   it('renders source elements for supported variants', () => {

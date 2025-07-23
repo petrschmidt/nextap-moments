@@ -1,7 +1,7 @@
-import { MomentToolbar } from './MomentToolbar/MomentToolbar.tsx';
+import { MomentToolbar } from '../MomentToolbar/MomentToolbar.tsx';
 import { forwardRef, useEffect, useRef, useState } from 'react';
 import type { Moment as MomentType } from '../../types';
-import { MomentProgress } from './MomentProgress/MomentProgress.tsx';
+import { MomentProgress } from '../MomentProgress/MomentProgress.tsx';
 import {
   MomentCard,
   MomentCardOverlay,
@@ -15,10 +15,10 @@ import {
   MomentVideoPlayOverlayIconWrapper,
 } from './styles.tsx';
 import { PlayIcon } from '@phosphor-icons/react';
-import { MomentVideoSourceSet } from './MomentVideoSourceSet/MomentVideoSourceSet.tsx';
-import { MomentImageSourceSet } from './MomentImageSourceSet/MomentImageSourceSet.tsx';
+import { MomentVideoSourceSet } from '../MomentVideoSourceSet/MomentVideoSourceSet.tsx';
+import { MomentImageSourceSet } from '../MomentImageSourceSet/MomentImageSourceSet.tsx';
 import { useUserPreferences } from '../../providers';
-import { MomentDescription } from './MomentDescription/MomentDescription.tsx';
+import { MomentDescription } from '../MomentDescription/MomentDescription.tsx';
 
 // Default moment duration when no video is provided (i.e. image-only moment)
 const MOMENT_DEFAULT_DURATION = 8000;

@@ -1,4 +1,4 @@
-import type { MomentImageFiles, MomentImageVariant } from '../../../types';
+import type { MomentImageFiles, MomentImageVariant } from '../../types';
 
 export type MomentImageSourceSetProps = {
   variants: MomentImageFiles['variants'];

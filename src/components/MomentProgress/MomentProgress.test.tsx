@@ -1,6 +1,6 @@
-import { render, screen } from '../../../test-utils';
+import { render, screen } from '../../test-utils.tsx';
 import { describe, it, expect } from 'vitest';
-import { MomentProgress, type MomentProgressProps } from './MomentProgress';
+import { MomentProgress, type MomentProgressProps } from './MomentProgress.tsx';
 
 describe('MomentProgress', () => {
   it('renders progressbar element', () => {

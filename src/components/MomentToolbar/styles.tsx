@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { media, rem } from '../../../styles';
+import { media, rem } from '../../styles';
 
 export const MomentContainer = styled.div`
   position: relative;

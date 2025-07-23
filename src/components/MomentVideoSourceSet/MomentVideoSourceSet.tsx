@@ -1,4 +1,4 @@
-import type { MomentVideoFiles, MomentVideoVariant } from '../../../types';
+import type { MomentVideoFiles, MomentVideoVariant } from '../../types';
 
 export type MomentMediaSourceSetProps = {
   variants: MomentVideoFiles['variants'];

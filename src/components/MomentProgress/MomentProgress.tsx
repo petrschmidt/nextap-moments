@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { rem } from '../../../styles';
+import { rem } from '../../styles';
 
 export type MomentProgressProps = {
   running: boolean;
