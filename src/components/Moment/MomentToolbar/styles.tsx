@@ -44,7 +44,7 @@ export const MomentUserName = styled.div`
   color: ${({ theme }) => theme.colors.foreground.primary};
 
   ${media.sm} {
-    font-size: ${({ theme }) => theme.fontSizes.md};
+    font-size: ${({ theme }) => theme.fontSizes.base};
   }
 `;
 
@@ -54,7 +54,7 @@ export const MomentButtonsContainer = styled.div`
   font-size: ${({ theme }) => theme.fontSizes.sm};
 
   ${media.sm} {
-    font-size: ${({ theme }) => theme.fontSizes.md};
+    font-size: ${({ theme }) => theme.fontSizes.base};
     gap: ${({ theme }) => theme.space.xl};
   }
   ${media.xl} {
