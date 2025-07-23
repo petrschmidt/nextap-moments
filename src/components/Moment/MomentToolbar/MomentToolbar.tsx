@@ -90,16 +90,17 @@ const Container = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: ${rem(12)} 0;
+  margin: ${({ theme }) => theme.space.md} 0;
   user-select: none;
-  z-index: 30;
+  z-index: ${({ theme }) => theme.zIndex.moment.description};
+  overflow: hidden;
 `;
 
 const UserContainer = styled.a`
   display: flex;
   align-items: center;
   text-decoration: none;
-  gap: ${rem(8)};
+  gap: ${({ theme }) => theme.space.md};
   max-width: 30%;
   width: auto;
 
@@ -111,10 +112,13 @@ const UserContainer = styled.a`
 const UserAvatarImage = styled.img`
   width: ${rem(20)};
   aspect-ratio: 1 / 1;
-  border-radius: 50%;
+  border-radius: ${({ theme }) => theme.radii.full};
 
   ${media.sm} {
-    width: ${rem(24)};
+    width: ${rem(32)};
+  }
+  ${media.md} {
+    width: ${rem(40)};
   }
 `;
 
@@ -122,29 +126,33 @@ const UserName = styled.div`
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
-  font-size: ${rem(14)};
+  font-size: ${({ theme }) => theme.fontSizes.sm};
   font-weight: 600;
-  color: #fff;
+  color: ${({ theme }) => theme.colors.foreground.primary};
+
+  ${media.sm} {
+    font-size: ${({ theme }) => theme.fontSizes.lg};
+  }
 `;
 
 const ButtonsContainer = styled.div`
   display: flex;
-  gap: ${rem(12)};
-  font-size: ${rem(14)};
+  gap: ${({ theme }) => theme.space.md};
+  font-size: ${({ theme }) => theme.fontSizes.sm};
 
   ${media.sm} {
-    font-size: ${rem(16)};
-    gap: ${rem(16)};
+    font-size: ${({ theme }) => theme.fontSizes.lg};
+    gap: ${({ theme }) => theme.space.xl};
   }
 `;
 
 const IconButton = styled.button`
   display: flex;
   align-items: center;
-  gap: ${rem(8)};
+  gap: ${({ theme }) => theme.space.xs};
   font-weight: 600;
-  color: #fff;
-  transition: transform 200ms ease-in;
+  color: ${({ theme }) => theme.colors.foreground.primary};
+  transition: transform ${({ theme }) => theme.transitions.normal};
 
   &:hover {
     transform: scale(1.1);

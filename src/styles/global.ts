@@ -10,6 +10,10 @@ export const GlobalStyle = createGlobalStyle`
     box-sizing: border-box;
   }
   
+  a {
+    text-decoration: none;
+  }
+  
   button {
     -webkit-appearance: none;
     border-radius: 0;

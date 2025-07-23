@@ -1,8 +1,7 @@
 import { Route, Routes } from 'react-router';
 import Home from './pages/Home/Home.tsx';
 import { ThemeProvider } from 'styled-components';
-import { theme } from './styles/theme.ts';
-import { GlobalStyle } from './styles/global.ts';
+import { theme, GlobalStyle } from './styles';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import '@fontsource/poppins/400.css';

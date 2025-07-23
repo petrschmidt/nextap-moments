@@ -1,10 +1,13 @@
 import styled from 'styled-components';
+import { rem } from '../../../styles';
 
 export type MomentProgressProps = {
   running: boolean;
   visible: boolean;
   durationMs: number;
 };
+
+const BORDER_RADIUS = rem(5);
 
 export const MomentProgress = ({ running, visible, durationMs }: MomentProgressProps) => {
   return (
@@ -18,7 +21,7 @@ const Container = styled.div`
   position: relative;
   width: 100%;
   height: 3px;
-  border-radius: 5px;
+  border-radius: ${BORDER_RADIUS};
   background-color: #ffffff77;
   overflow: hidden;
 `;
@@ -28,8 +31,8 @@ const Progress = styled.div<{ $running: boolean; $visible: boolean; $durationMs:
   inset: 0;
   width: 0;
   height: 100%;
-  background-color: #fff;
-  border-radius: 5px;
+  background-color: ${({ theme }) => theme.colors.foreground.primary};
+  border-radius: ${BORDER_RADIUS};
   animation-name: ${(p) => (p.$visible ? 'fill' : 'none')};
   animation-duration: ${(p) => p.$durationMs}ms;
   animation-timing-function: linear;

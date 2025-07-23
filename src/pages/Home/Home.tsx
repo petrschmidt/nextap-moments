@@ -5,6 +5,7 @@ import { useGetUserMoments } from '../../hooks/api/useGetUserMoments.ts';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useVirtualItems } from '../../hooks/useVirtualItems.ts';
 import { rem } from '../../styles/utils.ts';
+import { flexCenter } from '../../styles/mixins.ts';
 
 const PAGE_SIZE = 3;
 const VIRTUAL_ITEMS_BUFFER = 1;
@@ -87,9 +88,7 @@ export default function Home() {
 }
 
 const LoadingWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  ${flexCenter};
   height: 100dvh;
   font-size: ${rem(48)};
   font-weight: 600;

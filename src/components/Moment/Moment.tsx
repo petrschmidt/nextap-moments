@@ -18,6 +18,7 @@ import { PlayIcon } from '@phosphor-icons/react';
 import { MomentVideoSourceSet } from './MomentVideoSourceSet/MomentVideoSourceSet.tsx';
 import { MomentImageSourceSet } from './MomentImageSourceSet/MomentImageSourceSet.tsx';
 import { useUserPreferences } from '../../providers';
+import { MomentDescription } from './MomentDescription/MomentDescription.tsx';
 
 const MOMENT_DEFAULT_DURATION = 8000;
 
@@ -159,38 +160,47 @@ export const Moment = forwardRef<HTMLElement, MomentProps>(
             )}
 
             <MomentCardOverlay>
-              <MomentProgress running={isPlaying} visible={isVisible} durationMs={duration} />
-
               <MomentVideoPlayOverlay onClick={togglePlayback} $hidden={isPlaying}>
                 <MomentVideoPlayOverlayIconWrapper>
                   <PlayIcon weight="fill" size={32} />
                 </MomentVideoPlayOverlayIconWrapper>
               </MomentVideoPlayOverlay>
 
-              <MomentToolbar
-                user={{
-                  username: moment.user._username,
-                  avatarBgColor: moment.user.avatar_image_bg,
-                  avatarImageUrl: moment.user.avatar_image_url,
-                  url: '',
+              <div>
+                <MomentProgress running={isPlaying} visible={isVisible} durationMs={duration} />
+                <MomentToolbar
+                  user={{
+                    username: moment.user._username,
+                    avatarBgColor: moment.user.avatar_image_bg,
+                    avatarImageUrl: moment.user.avatar_image_url,
+                    url: '',
+                  }}
+                  socialActions={{
+                    like: {
+                      count: moment.clap_count,
+                    },
+                    comment: {
+                      count: moment.comment_count,
+                    },
+                    share: {},
+                  }}
+                  playbackToggle={{
+                    isPaused: !isPlaying,
+                    onClick: togglePlayback,
+                  }}
+                  muteToggle={{
+                    isMuted: muted,
+                    onClick: () => setMuted(!muted),
+                  }}
+                />
+              </div>
+              <MomentDescription
+                location={{
+                  name: moment.geo_pin.name,
+                  url: `/location`,
                 }}
-                socialActions={{
-                  like: {
-                    count: moment.clap_count,
-                  },
-                  comment: {
-                    count: moment.comment_count,
-                  },
-                  share: {},
-                }}
-                playbackToggle={{
-                  isPaused: !isPlaying,
-                  onClick: togglePlayback,
-                }}
-                muteToggle={{
-                  isMuted: muted,
-                  onClick: () => setMuted(!muted),
-                }}
+                description={moment.description?.text}
+                views={moment.view_count}
               />
             </MomentCardOverlay>
           </MomentCard>
