@@ -13,17 +13,8 @@ export const useGetUserMoments = (userId: string = '204993912312432428', paging?
       apiFetcher<UseGetUserMomentsResponse>(
         API_ENDPOINTS.getUserMoments({ userId }, { limit: paging?.limit, after: pageParam })
       ),
-    initialPageParam: 0,
-    getNextPageParam: (lastPage) => {
-      const cursor = Number(lastPage.cursor?.after);
-      const limit = paging?.limit;
-
-      if (Number.isInteger(cursor) && limit !== undefined) {
-        return cursor + limit;
-      }
-
-      return 0;
-    },
+    initialPageParam: '0',
+    getNextPageParam: (lastPage) => lastPage.cursor.after,
   });
 };
 export type UseGetUserMomentsResponse = ApiResponse<Moment[]>;

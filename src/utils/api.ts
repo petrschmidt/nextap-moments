@@ -6,8 +6,8 @@ export const apiFetcher = async <T>(endpoint: string, init?: RequestInit): Promi
 
 export type PagingProps = {
   limit?: number;
-  before?: number;
-  after?: number;
+  before?: string;
+  after?: string;
 };
 
 const prepareEndpoint = <T extends Record<string, unknown>>(baseFactory: (params: T) => string) => {
@@ -20,8 +20,8 @@ const prepareEndpoint = <T extends Record<string, unknown>>(baseFactory: (params
 
     const searchParams = new URLSearchParams();
     if (paging.limit) searchParams.set('limit', paging.limit.toString());
-    if (paging.after) searchParams.set('after', paging.after.toString());
-    if (paging.before) searchParams.set('before', paging.before.toString());
+    if (paging.after) searchParams.set('after', paging.after);
+    if (paging.before) searchParams.set('before', paging.before);
 
     return `${baseUrl}?${searchParams.toString()}`;
   };
