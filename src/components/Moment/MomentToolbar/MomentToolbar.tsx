@@ -11,7 +11,7 @@ import {
   SpeakerSimpleXIcon,
 } from '@phosphor-icons/react';
 import styled from 'styled-components';
-import { media, rem } from '../../../styles/utils.ts';
+import { media, rem } from '../../../styles';
 
 type ActionName = 'like' | 'comment' | 'share';
 type ActionProps = {
@@ -43,6 +43,9 @@ export type MomentToolbarProps = {
   };
 };
 
+/**
+ * Toolbar displays user avatar and name, social actions and playback/mute controls.
+ */
 export const MomentToolbar = ({
   user,
   socialActions,
@@ -67,16 +70,20 @@ export const MomentToolbar = ({
             const IconComponent = ACTION_ICON_MAP[actionName as ActionName];
 
             return (
-              <IconButton key={actionName} onClick={onClick}>
+              <IconButton key={actionName} onClick={onClick} data-test={actionName}>
                 <IconComponent />
                 {count}
               </IconButton>
             );
           })}
-          <IconButton onClick={playbackToggle.onClick}>
+          <IconButton
+            onClick={playbackToggle.onClick}
+            data-test={playbackToggle.isPaused ? 'play-button' : 'pause-button'}>
             {playbackToggle.isPaused ? <PlayIcon /> : <PauseIcon />}
           </IconButton>
-          <IconButton onClick={muteToggle.onClick}>
+          <IconButton
+            onClick={muteToggle.onClick}
+            data-test={muteToggle.isMuted ? 'muted-button' : 'unmuted-button'}>
             {muteToggle.isMuted ? <SpeakerSimpleXIcon /> : <SpeakerSimpleHighIcon />}
           </IconButton>
         </ButtonsContainer>
