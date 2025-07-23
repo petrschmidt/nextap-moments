@@ -41,6 +41,7 @@ export const MomentTitle = styled.div<{ $isVisible: boolean }>`
 
 export const MomentCard = styled.div<{ $isVisible: boolean; $backgroundColor: string }>`
   position: relative;
+  /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */
   height: min(100%, calc(100dvw * 16 / 9 - var(--container-padding) * 2));
   aspect-ratio: 9 / 16;
   border-radius: ${({ theme }) => theme.radii.xl};

@@ -87,7 +87,7 @@ export default function Home() {
 
   return (
     <MomentWrapper>
-      <MomentPlaceholder style={{ '--placeholder-multiplier': currentIndex - 1 }} />
+      <MomentPlaceholder $multiplier={currentIndex - 1} />
       {memoizedMoments}
     </MomentWrapper>
   );
@@ -119,6 +119,6 @@ const MomentWrapper = styled.div`
  * Special component needed for virtualization.
  * It fills the space before the current virtualized items for smooth scrolling/flowing experience.
  */
-const MomentPlaceholder = styled.div`
-  height: calc(100dvh * var(--placeholder-multiplier));
+const MomentPlaceholder = styled.div<{ $multiplier: number }>`
+  height: calc(100dvh * ${(p) => p.$multiplier});
 `;
