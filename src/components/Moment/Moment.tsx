@@ -1,5 +1,5 @@
 import { MomentToolbar } from './MomentToolbar/MomentToolbar.tsx';
-import { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
+import { forwardRef, useEffect, useRef, useState } from 'react';
 import type { Moment as MomentType } from '../../types';
 import { MomentProgress } from './MomentProgress/MomentProgress.tsx';
 import {
