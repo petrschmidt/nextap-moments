@@ -107,4 +107,5 @@ export const MomentVideoPlayOverlayIconWrapper = styled.button`
   background-color: rgba(124, 125, 133, 0.5);
   opacity: 0.9;
   color: #fff;
+  cursor: default;
 `;
